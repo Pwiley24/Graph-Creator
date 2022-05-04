@@ -1,0 +1,61 @@
+package graphProject;
+
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+public class GraphPanel extends JPanel{
+	
+	ArrayList<Node> nodeList = new ArrayList<Node>();
+	ArrayList<Edge> edgeList = new ArrayList<Edge>();
+	int circleR = 20;
+	
+	public GraphPanel() {
+		super();
+	}
+	
+	public void addNode(int newX, int newY, String newLabel) {
+		nodeList.add(new Node(newX, newY, newLabel));
+	}
+	
+	public void addEdge(Node first, Node second, String newLabel) {
+		edgeList.add(new Edge(first, second, newLabel));
+	}
+	
+	public Node getNode(int x, int y) {
+		for(int i = 0; i < nodeList.size(); i++) {
+			Node node = nodeList.get(i);
+			//a^2 + b^2 = c^2
+			double radius = Math.sqrt(Math.pow(x-node.getX(), 2) + Math.pow(y-node.getY(), 2));
+			if(radius < circleR) {
+				return node;
+			};
+		}
+		return null;
+		
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		//draw the nodes
+		for(int i = 0; i < nodeList.size(); i++) {
+			g.drawOval(nodeList.get(i).getX() - circleR, 
+					   nodeList.get(i).getY() - circleR, 
+					   circleR * 2, 
+					   circleR * 2);
+			g.drawString(nodeList.get(i).getLabel(), 
+					     nodeList.get(i).getX() - circleR/8,
+					     nodeList.get(i).getY() + circleR/8);
+		}
+	
+		for(int i = 0; i < edgeList.size(); i++) {
+			g.drawLine(edgeList.get(i).getFirst().getX(),
+					   edgeList.get(i).getFirst().getY(), 
+					   edgeList.get(i).getSecond().getX(), 
+					   edgeList.get(i).getSecond().getY());
+		}
+	}
+
+}
