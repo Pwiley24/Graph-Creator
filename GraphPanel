@@ -1,7 +1,9 @@
 package graphProject;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -12,16 +14,51 @@ public class GraphPanel extends JPanel{
 	ArrayList<Edge> edgeList = new ArrayList<Edge>();
 	int circleR = 20;
 	
+	ArrayList<ArrayList<Boolean>> adjacency = new ArrayList<ArrayList<Boolean>>();
+	
 	public GraphPanel() {
 		super();
 	}
 	
+	public void printAdjacency() {
+		for(int i = 0; i < adjacency.size(); i++) {
+			for(int a = 0; a < adjacency.get(0).size(); a++) {
+				System.out.print(adjacency.get(i).get(a) + "\t");
+			}
+			System.out.println();
+		}
+	
+	}
+	
 	public void addNode(int newX, int newY, String newLabel) {
 		nodeList.add(new Node(newX, newY, newLabel));
+		adjacency.add(new ArrayList<Boolean>());
+		for (int a = 0; a < adjacency.size() - 1; a++) {
+			adjacency.get(a).add(false);
+		}
+		for(int i = 0; i < adjacency.size(); i++) {
+			adjacency.get(adjacency.size() - 1).add(false);
+		}
+		printAdjacency();
 	}
 	
 	public void addEdge(Node first, Node second, String newLabel) {
 		edgeList.add(new Edge(first, second, newLabel));
+		
+		int firstIndex = 0;
+		int secondIndex = 0;
+		for(int i = 0; i < nodeList.size(); i++) {
+			if(first.equals(nodeList.get(i))) {
+				firstIndex = i;
+			}
+			if(second.equals(nodeList.get(i))) {
+				secondIndex = i;
+			}
+		}
+		adjacency.get(firstIndex).set(secondIndex, true);
+		adjacency.get(secondIndex).set(firstIndex, true);
+		
+		printAdjacency();
 	}
 	
 	public Node getNode(int x, int y) {
@@ -41,6 +78,11 @@ public class GraphPanel extends JPanel{
 		super.paintComponent(g);
 		//draw the nodes
 		for(int i = 0; i < nodeList.size(); i++) {
+			if(nodeList.get(i).getHighlighted() == true) {
+				g.setColor(Color.RED);
+			}else {
+				g.setColor(Color.BLACK);
+			}
 			g.drawOval(nodeList.get(i).getX() - circleR, 
 					   nodeList.get(i).getY() - circleR, 
 					   circleR * 2, 
@@ -51,11 +93,39 @@ public class GraphPanel extends JPanel{
 		}
 	
 		for(int i = 0; i < edgeList.size(); i++) {
+			g.setColor(Color.BLACK);
 			g.drawLine(edgeList.get(i).getFirst().getX(),
 					   edgeList.get(i).getFirst().getY(), 
 					   edgeList.get(i).getSecond().getX(), 
 					   edgeList.get(i).getSecond().getY());
+			
+			int fx = edgeList.get(i).getFirst().getX();
+			int fy = edgeList.get(i).getFirst().getY();
+			int sx = edgeList.get(i).getSecond().getX();
+			int sy = edgeList.get(i).getSecond().getY();
+			g.drawString(edgeList.get(i).getLabel(),
+					     Math.min(fx,  sx) + (Math.abs(sx - fx) / 2),
+					     Math.min(fy, sy) + (Math.abs(sy - fy) / 2));
+			
+			for(int a = 0; a < nodeList.size(); a++) {
+				g.setColor(new Color(235, 237, 235));
+				g.fillOval(nodeList.get(a).getX() - circleR, 
+						   nodeList.get(a).getY() - circleR, 
+						   circleR * 2, 
+						   circleR * 2);
+				g.setColor(Color.BLACK);
+				g.drawString(nodeList.get(a).getLabel(), 
+					     nodeList.get(a).getX() - circleR/8,
+					     nodeList.get(a).getY() + circleR/8);
+			}
 		}
+	}
+
+	public void stopHighlighting() {
+		for(int i = 0; i < nodeList.size(); i++) {
+			nodeList.get(i).setHighlighted(false);
+		}
+		
 	}
 
 }
