@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class GraphCreator implements ActionListener, MouseListener{
@@ -20,7 +21,7 @@ public class GraphCreator implements ActionListener, MouseListener{
 	
 	JButton nodeB = new JButton("Node");
 	JButton edgeB = new JButton("Edge");
-	JTextField labels = new JTextField("Text");
+	JTextField labels = new JTextField("A");
 	Container west = new Container();
 	
 	final int NODE_CREATE = 0;
@@ -30,6 +31,7 @@ public class GraphCreator implements ActionListener, MouseListener{
 	Node first = null;
 	
 	public GraphCreator() {
+		panel.setBackground(new Color(235, 237, 235));
 		frame.setSize(800, 600);
 		frame.setLayout(new BorderLayout());
 		frame.add(panel, BorderLayout.CENTER);
@@ -81,12 +83,12 @@ public class GraphCreator implements ActionListener, MouseListener{
 			if(n != null) {//if you clicked in a circle
 				first = n;
 				state = EDGE_SECOND;
-				//add highlight
+				n.setHighlighted(true);
 			}
 		}else if(state == EDGE_SECOND) {
 			Node n = panel.getNode(e.getX(), e.getY());
 			if(n != null && !first.equals(n)) {//if you clicked in a circle
-				//remove highlight 
+				first.setHighlighted(false);
 				panel.addEdge(first, n, labels.getText());
 				first = null;
 				state = EDGE_FIRST;
@@ -121,6 +123,8 @@ public class GraphCreator implements ActionListener, MouseListener{
 			edgeB.setBackground(Color.ORANGE);
 			nodeB.setBackground(Color.LIGHT_GRAY);
 			state = EDGE_FIRST;
+			panel.stopHighlighting();
+			frame.repaint();
 		}
 		
 	}
