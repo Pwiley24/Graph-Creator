@@ -19,6 +19,30 @@ public class GraphPanel extends JPanel{
 	public GraphPanel() {
 		super();
 	}
+	public ArrayList<Edge> getEdgeList() {
+		return edgeList;
+	}
+	
+	public ArrayList<String> getConnectedLabels(String label){
+		ArrayList<String> toReturn = new ArrayList<String>();
+		int b = getIndex(label);
+		for(int i = 0; i < adjacency.size(); i++) {
+			if((adjacency.get(b).get(i) == true) && (nodeList.get(i).getLabel().equals(label) == false)) { 
+				toReturn.add(nodeList.get(i).getLabel());
+			}
+		}
+		return toReturn;
+	}
+	
+	public int getIndex(String s) {
+		for(int i = 0; i < nodeList.size(); i++) {
+			Node node = nodeList.get(i);
+			if(s.equals(node.getLabel())) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	
 	public void printAdjacency() {
 		for(int i = 0; i < adjacency.size(); i++) {
@@ -71,6 +95,16 @@ public class GraphPanel extends JPanel{
 			};
 		}
 		return null;	
+	}
+	
+	public Node getNode(String s) {
+		for(int i = 0; i < nodeList.size(); i++) {
+			Node node = nodeList.get(i);
+			if(s.equals(node.getLabel())) {
+				return node;
+			}
+		}
+		return null;
 	}
 	
 	public boolean nodeExists(String s) {
