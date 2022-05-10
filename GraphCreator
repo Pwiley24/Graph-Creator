@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,17 +24,21 @@ public class GraphCreator implements ActionListener, MouseListener{
 	JButton nodeB = new JButton("Node");
 	JButton edgeB = new JButton("Edge");
 	JButton connectedB = new JButton("Test Connected");
+	JButton salesmanB = new JButton("Shortest Path");
+	JTextField salesmanStart = new JTextField("A");
 	JTextField labels = new JTextField("A");
 	JTextField firstNode = new JTextField("First");
 	JTextField secondNode = new JTextField("Second");
 	Container west = new Container();
 	Container east = new Container();
+	Container south = new Container();
 	
 	final int NODE_CREATE = 0;
 	final int EDGE_FIRST = 1;
 	final int EDGE_SECOND = 2;
 	int state = NODE_CREATE;
 	Node first = null;
+	ArrayList<ArrayList<Node>> completed = new ArrayList<ArrayList<Node>>();
 	
 	public GraphCreator() {
 		panel.setBackground(new Color(235, 237, 235));
@@ -60,6 +65,13 @@ public class GraphCreator implements ActionListener, MouseListener{
 		east.add(connectedB);
 		connectedB.addActionListener(this);
 		frame.add(east, BorderLayout.EAST);
+		
+		//South container
+		south.setLayout(new GridLayout(1,2));
+		south.add(salesmanStart);
+		south.add(salesmanB);
+		salesmanB.addActionListener(this);
+		frame.add(south, BorderLayout.SOUTH);
 		
 		//set frame visible
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,10 +114,23 @@ public class GraphCreator implements ActionListener, MouseListener{
 		}else if(state == EDGE_SECOND) {
 			Node n = panel.getNode(e.getX(), e.getY());
 			if(n != null && !first.equals(n)) {//if you clicked in a circle
-				first.setHighlighted(false);
-				panel.addEdge(first, n, labels.getText());
-				first = null;
-				state = EDGE_FIRST;
+				String s = labels.getText();
+				boolean valid = true;
+				for(int i = 0; i < s.length(); i++) { //check if the edge value is a distance digit
+					if(Character.isDigit(s.charAt(i)) == false){
+						valid = false;
+					}
+				}
+				if(valid == true) {
+					first.setHighlighted(false);
+					panel.addEdge(first, n, labels.getText());
+					first = null;
+					state = EDGE_FIRST;
+				}else {
+					JOptionPane.showMessageDialog(frame, "You can only use digits in edge labels.");
+				}
+				
+				
 			}
 		}
 		frame.repaint();
@@ -144,9 +169,68 @@ public class GraphCreator implements ActionListener, MouseListener{
 				JOptionPane.showMessageDialog(frame, "First node is not in your graph.");
 			}else if(panel.nodeExists(secondNode.getText()) == false) {
 				JOptionPane.showMessageDialog(frame, "Second node is not in your graph.");
+			}else {
+				Queue queue = new Queue();
+				ArrayList<String> connectedList = new ArrayList<String>();
+				connectedList.add(panel.getNode(firstNode.getText()).getLabel());
+				ArrayList<String> edges = panel.getConnectedLabels(firstNode.getText());
+				for(int i = 0; i < edges.size(); i++) {
+					queue.enqueue(edges.get(i));
+				}
+				while(queue.isEmpty() == false) { //while the queue is not empty
+					String currentNode = queue.dequeue(); //remove the first index node from the queue
+					if(connectedList.contains(currentNode) == false) {//if the just removed node is not in the list
+						connectedList.add(currentNode); //add it
+					}
+					edges = panel.getConnectedLabels(currentNode);
+					for(int i = 0; i < edges.size(); i++) {
+						if(connectedList.contains(edges.get(i)) == false) {
+							queue.enqueue(edges.get(i));
+						}
+					}
+				}
+				if(connectedList.contains(secondNode.getText())) {
+					JOptionPane.showMessageDialog(frame, "Connected :)");
+				}else {
+					JOptionPane.showMessageDialog(frame, "Not Connected :(");
+				}
+				
+			}
+		}else if(e.getSource().equals(salesmanB)) {
+			if(panel.getNode(salesmanStart.getText()) != null) {
+				travelling(panel.getNode(salesmanStart.getText()), new ArrayList<Node>(), 0);
+			}else {
+				JOptionPane.showMessageDialog(frame, "Not a valid starting node!");
 			}
 		}
 		
 	}
+	
+	public void travelling(Node n, ArrayList<Node> path, int total) {
+		
+		//if the number of nodes in path is = to the number of nodes
+		
+		// add this path to completed list
+		// remove last thing in path
+		// return
+		//else
+		// for each edge
+		for(int i = 0; i < edgeList.size(); i++) {
+			Edge e = edgeList.get(i);
+			if(e.getOtherEnd(n) != null) {
+				if(path.contains(e.getOtherEnd(n)) == false) {
+					path.add(e.getOtherEnd(n));
+					travelling(e.getOtherEnd(n), path, total + Integer.parseInt(e.getLabel()));
+					
+				}
+			}
+		}
+		//  see if they are connected to the current node
+		//  if they are not already in the path
+		//   add node to path
+		//   travelling(connected node, path, total + edge cost);
+		//remove the last thing in the path
+	}
 
 }
+
