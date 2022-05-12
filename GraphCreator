@@ -39,6 +39,7 @@ public class GraphCreator implements ActionListener, MouseListener{
 	int state = NODE_CREATE;
 	Node first = null;
 	ArrayList<ArrayList<Node>> completed = new ArrayList<ArrayList<Node>>();
+	ArrayList<Integer> arrayTotal = new ArrayList<Integer>();
 	
 	public GraphCreator() {
 		panel.setBackground(new Color(235, 237, 235));
@@ -198,7 +199,27 @@ public class GraphCreator implements ActionListener, MouseListener{
 			}
 		}else if(e.getSource().equals(salesmanB)) {
 			if(panel.getNode(salesmanStart.getText()) != null) {
-				travelling(panel.getNode(salesmanStart.getText()), new ArrayList<Node>(), 0);
+				ArrayList<Node> firstNode = new ArrayList<Node>();
+				firstNode.add(panel.getNode(salesmanStart.getText()));
+				travelling(panel.getNode(salesmanStart.getText()), firstNode, 0);
+				//make sure completed has a path
+				System.out.println(completed + " completed");
+			
+				if(completed.isEmpty() == false) {// if completed has paths in it
+					//find shortest
+					
+					int shortest = arrayTotal.get(0);
+					for(int i = 0; i < completed.size(); i++) {
+						WORK HERE
+					}
+					// total for first path
+					//  for each path in completed
+					//    get total 
+					//    if total is less than first path replace first path with it
+					//print
+				}
+				//if does have path; find shortest path
+				//print out value and the path
 			}else {
 				JOptionPane.showMessageDialog(frame, "Not a valid starting node!");
 			}
@@ -206,24 +227,40 @@ public class GraphCreator implements ActionListener, MouseListener{
 		
 	}
 	
+	
+	
+	
 	public void travelling(Node n, ArrayList<Node> path, int total) {
 		
 		//if the number of nodes in path is = to the number of nodes
+		if(path.size() == panel.getNodeList().size()) {
+			ArrayList<Node> p = new ArrayList<Node>();
+			for(int i = 0; i < path.size(); i++) {
+				p.add(path.get(i));
+			}
+			completed.add(p);
+			arrayTotal.add(total);
+			path.remove(path.size()-1);
+			
+			return;
+		}else {
 		
-		// add this path to completed list
-		// remove last thing in path
-		// return
-		//else
-		// for each edge
-		for(int i = 0; i < edgeList.size(); i++) {
-			Edge e = edgeList.get(i);
-			if(e.getOtherEnd(n) != null) {
-				if(path.contains(e.getOtherEnd(n)) == false) {
-					path.add(e.getOtherEnd(n));
-					travelling(e.getOtherEnd(n), path, total + Integer.parseInt(e.getLabel()));
-					
+			// add this path to completed list
+			// remove last thing in path
+			// return
+			//else
+			// for each edge
+			for(int i = 0; i < panel.edgeList.size(); i++) {
+				Edge e = panel.edgeList.get(i);
+				if(e.getOtherEnd(n) != null) {// if an edge in edgeList connects with the starting node
+					if(path.contains(e.getOtherEnd(n)) == false) {//if the path is not already in the path list
+						path.add(e.getOtherEnd(n));
+						travelling(e.getOtherEnd(n), path, total + Integer.parseInt(e.getLabel()));
+						
+					}
 				}
 			}
+			path.remove(path.size()-1);
 		}
 		//  see if they are connected to the current node
 		//  if they are not already in the path
