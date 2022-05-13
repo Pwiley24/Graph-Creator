@@ -23,6 +23,10 @@ public class GraphPanel extends JPanel{
 		return edgeList;
 	}
 	
+	public ArrayList<Node> getNodeList() {
+		return nodeList;
+	}
+	
 	public ArrayList<String> getConnectedLabels(String label){
 		ArrayList<String> toReturn = new ArrayList<String>();
 		int b = getIndex(label);
