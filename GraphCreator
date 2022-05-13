@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class GraphCreator implements ActionListener, MouseListener{
@@ -203,7 +202,12 @@ public class GraphCreator implements ActionListener, MouseListener{
 				firstNode.add(panel.getNode(salesmanStart.getText()));
 				travelling(panel.getNode(salesmanStart.getText()), firstNode, 0);
 				//make sure completed has a path
-				System.out.println(completed + " completed");
+				for(int i = 0; i < completed.size(); i++) {
+					for(int a = 0; a < completed.get(i).size()) {
+						System.out.println(completed.get(i).get(a).getLabel());
+					}
+					System.out.println(completed.get(i));
+				}
 			
 				if(completed.isEmpty() == false) {// if completed has paths in it
 					//find shortest
@@ -215,6 +219,7 @@ public class GraphCreator implements ActionListener, MouseListener{
 						}
 					}
 					System.out.println("shortest path: " + shortest);
+					JOptionPane.showMessageDialog(frame, "Shortest Path: " + shortest);
 				}
 				//if does have path; find shortest path
 				//print out value and the path
@@ -268,4 +273,3 @@ public class GraphCreator implements ActionListener, MouseListener{
 	}
 
 }
-
