@@ -210,13 +210,11 @@ public class GraphCreator implements ActionListener, MouseListener{
 					
 					int shortest = arrayTotal.get(0);
 					for(int i = 0; i < completed.size(); i++) {
-						WORK HERE
+						if(shortest > arrayTotal.get(i)){//if the distance is less than that of the first path
+							shortest = arrayTotal.get(i);
+						}
 					}
-					// total for first path
-					//  for each path in completed
-					//    get total 
-					//    if total is less than first path replace first path with it
-					//print
+					System.out.println("shortest path: " + shortest);
 				}
 				//if does have path; find shortest path
 				//print out value and the path
