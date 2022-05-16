@@ -1,3 +1,11 @@
+/*
+ * This project creates a graph in which users can plot and label nodes and lines onto.
+ * The graph has buttons that can check whether two nodes are connected by lines and
+ * what the shortest path would be to hit all the connected nodes on a graph starting at a
+ * node indicated by the user.
+ * Author: Paige Wiley
+ * Date: 05/15/2022
+ */
 package graphProject;
 
 import java.awt.BorderLayout;
@@ -199,30 +207,30 @@ public class GraphCreator implements ActionListener, MouseListener{
 		}else if(e.getSource().equals(salesmanB)) {
 			if(panel.getNode(salesmanStart.getText()) != null) {
 				ArrayList<Node> firstNode = new ArrayList<Node>();
+				ArrayList<String> shortestPath = new ArrayList<String>();
 				firstNode.add(panel.getNode(salesmanStart.getText()));
-				travelling(panel.getNode(salesmanStart.getText()), firstNode, 0);
-				//make sure completed has a path
-				for(int i = 0; i < completed.size(); i++) {
-					for(int a = 0; a < completed.get(i).size()) {
-						System.out.println(completed.get(i).get(a).getLabel());
-					}
-					System.out.println(completed.get(i));
-				}
-			
+				travelling(panel.getNode(salesmanStart.getText()), firstNode, 0);	
 				if(completed.isEmpty() == false) {// if completed has paths in it
-					//find shortest
-					
+					//find shortest:
 					int shortest = arrayTotal.get(0);
 					for(int i = 0; i < completed.size(); i++) {
 						if(shortest > arrayTotal.get(i)){//if the distance is less than that of the first path
 							shortest = arrayTotal.get(i);
 						}
 					}
-					System.out.println("shortest path: " + shortest);
-					JOptionPane.showMessageDialog(frame, "Shortest Path: " + shortest);
+					//then put the shortest path node order into string array:
+					for(int i = 0; i < completed.size(); i++) {
+						for(int a = 0; a < completed.get(i).size(); a++) {//iterates through each path that is in completed
+							int total = arrayTotal.get(i);
+							if(total == shortest) {
+								shortestPath.add(completed.get(i).get(a).getLabel());
+								
+							}
+						}
+					}	
+					System.out.println("total: " + shortest);
+					JOptionPane.showMessageDialog(frame, "Shortest Path: " + shortestPath + "\n" + "Shortest total: " + shortest);
 				}
-				//if does have path; find shortest path
-				//print out value and the path
 			}else {
 				JOptionPane.showMessageDialog(frame, "Not a valid starting node!");
 			}
